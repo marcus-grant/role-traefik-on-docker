@@ -12,3 +12,10 @@ def test_hosts_file(host):
     assert f.exists
     assert f.user == 'root'
     assert f.group == 'root'
+
+
+def test_docker_container_running(host):
+    """ Tests whether the traefik container is actually running
+    """
+    traefik_container = host.docker('traefik')
+    assert traefik_container.is_running
