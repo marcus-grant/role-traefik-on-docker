@@ -9,3 +9,19 @@
       changed_when: false
     - name: Install Docker
       include_role: name=geerlingguy.docker
+    - name: install needed docker management dependencies
+      apt: name={{ item }} state=latest update_cache=true
+      loop:
+        - python-setuptools
+        - python-pip
+        - python-docker
+        - python3-setuptools
+        - python3-pip
+        - python3-docker
+    - name: Pull & Run test hello-world http server container
+      docker_container:
+        name: hello-world
+        image: strm/helloworld-http
+        restart_policy: unless-stopped
+        ports:
+          - "12345:80"

@@ -1,21 +1,44 @@
+""" Tests the role using the default ubuntu scenario
+"""
 import os
+import requests
 
 import testinfra.utils.ansible_runner
 
+# pylint: disable=invalid-name
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 
+# These test that the testing environment was created properly ##############
 def test_hosts_file(host):
-    f = host.file('/etc/hosts')
+    """ Standard molecule env test """
+    h_file = host.file('/etc/hosts')
 
-    assert f.exists
-    assert f.user == 'root'
-    assert f.group == 'root'
+    assert h_file.exists
+    assert h_file.user == 'root'
+    assert h_file.group == 'root'
 
 
-def test_docker_container_running(host):
-    """ Tests whether the traefik container is actually running
-    """
-    traefik_container = host.docker('traefik')
-    assert traefik_container.is_running
+def test_docker_host_running(host):
+    """ Just check systemd for running dockerd """
+    dockerd = host.service('docker')
+    assert dockerd.is_running
+
+
+def test_helloworld_container_running(host):
+    """ Ensure helloworld container running & and responds to http request """
+    hello_container = host.docker('hello-world')
+    assert hello_container.is_running
+    req_url = 'http://192.168.99.13:12345'
+    resp = requests.get(req_url)
+    assert resp.ok
+    assert b'<title>HTTP Hello World</title>' in resp.content
+
+
+# Here testing the actual traefik install begins ##############################
+#  def test_docker_container_running(host):
+#      """ Tests whether the traefik container is actually running
+#      """
+#      traefik_container = host.docker('traefik')
+#      assert traefik_container.is_running
