@@ -1,2 +1,6 @@
 ---
 # defaults file for traefik-on-docker
+traefik_debug: false
+traefik_api_port: 8080
+traefik_dashboard_entrypoint: traefik
+traefik_data_directory: /var/www/traefik

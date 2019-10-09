@@ -4,9 +4,9 @@ TO-DO's
 In-Progress
 -----------
 
-- [ ] Verify docker is installed
-- [ ] Verify traefik image is pulled
+- [ ] Verify the `traefik_data_directory` is created
 - [ ] Verify traefik container is running
+- [ ] Basic TOML 
 - [ ] Install the container with defaults
 - [ ] Try to get this to work with docker-in-docker instead
 - [ ] Handle traefik dashboard auth properties
@@ -24,3 +24,9 @@ Future
 
 - [ ] Consider adding a more generic list of dictionaries to handle endpoint specs
 - [ ] Add arch testing and dependencies with documentation
+
+Complete
+--------
+
+- [x] Verify docker is installed
+- [x] Verify hello-world test container is working

@@ -1,2 +1,8 @@
 ---
-# tasks file for traefik-on-docker
+- name: traefik directories present
+  become: true
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - '{{ traefik_data_directory }}'

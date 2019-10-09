@@ -18,6 +18,18 @@ that can/should be set via parameters to the role. Any variables that are read
 from other roles and/or the global scope (ie. hostvars, group vars, etc.) should
 be mentioned here as well.
 
+- `traefik_debug`
+  - defaults to `false`
+  - determines if the traefik service should be run in its `debug` mode
+- `traefik_api_port`
+  - defaults to `8080`
+  - the port where the traefik api communicates through
+  - also where to reach its dashboard interface
+- `traefik_data_directory`
+  - defaults to `/var/www/traefik`
+  - determines where the traefik service's configs, logs, etc. are stored
+
+
 Dependencies
 ------------
 

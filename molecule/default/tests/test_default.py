@@ -10,7 +10,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 
-# These test that the testing environment was created properly ##############
+# These test that the testing environment was created properly ################
 def test_hosts_file(host):
     """ Standard molecule env test """
     h_file = host.file('/etc/hosts')
@@ -37,8 +37,11 @@ def test_helloworld_container_running(host):
 
 
 # Here testing the actual traefik install begins ##############################
-#  def test_docker_container_running(host):
-#      """ Tests whether the traefik container is actually running
-#      """
+def test_traefik_data_directory(host):
+    traefik_dir = host.file('/var/www/traefik')
+    assert traefik_dir.exists
+    assert traefik_dir.is_directory
+#  def test_traefik_container_running(host):
+#      """ Tests whether the traefik container is actually running """
 #      traefik_container = host.docker('traefik')
 #      assert traefik_container.is_running
