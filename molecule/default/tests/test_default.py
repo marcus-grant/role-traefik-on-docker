@@ -38,9 +38,26 @@ def test_helloworld_container_running(host):
 
 # Here testing the actual traefik install begins ##############################
 def test_traefik_data_directory(host):
+    """ Ensure default traefik data/config directory in place """
     traefik_dir = host.file('/var/www/traefik')
     assert traefik_dir.exists
     assert traefik_dir.is_directory
+
+
+def test_config_files(host):
+    """ Tests the existence and some of the contents of the two config files:
+        - /var/www/traefik/traefik.toml
+        - /var/www/traefik/acme.json """
+    acme_config = host.file('/var/www/traefik/acme.json')
+    assert acme_config.exists
+    assert acme_config.is_file
+    assert acme_config.mode == 0o600
+    traefik_config = host.file('/var/www/traefik/traefik.toml')
+    assert traefik_config.exists
+    assert traefik_config.is_file
+    assert traefik_config.mode == 0o600
+
+
 def test_docker_traefik_network(host):
     """ Tests that the right docker network exists """
     cmd = host.run('docker network inspect web')

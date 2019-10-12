@@ -5,7 +5,21 @@
     path: '{{ item }}'
     state: directory
   loop:
-    - '{{ traefik_data_directory }}'
+    - '{{ traefik_dir }}'
+
+- name: traefik.toml config file exists
+  become: true
+  file:
+    path: '{{ traefik_dir }}/acme.json'
+    state: touch
+    mode: 0600
+
+- name: template traefik.toml configs file
+  become: true
+  template:
+    src: ../templates/traefik.toml.j2
+    dest: '{{ traefik_dir }}/traefik.toml'
+    mode: 0600
 
 - name: create traefik administered docker internal network
   become: true

@@ -29,17 +29,19 @@ defaultEntryPoints = ["http", "https"]
 ################################################################
 
 [entryPoints]
+  [entryPoints.{{ traefik_api_entrypoint }}]
+    address = ":{{ traefik_api_port }}"
+    [entryPoints.{{ traefik_api_entrypoint }}.auth]
+      [entryPoints.{{ traefik_api_entrypoint }}.auth.basic]
+        users = ["admin:{{ traefik_admin_encrypted_passwd }}"]
   [entryPoints.http]
-  address = ":80"
+    address = ":80"
     [entryPoints.http.redirect]
-    entryPoint = "https"
-
+      entryPoint = "https"
   [entryPoints.https]
   address = ":443"
     [entryPoints.https.tls]
 
-  [entryPoints.{{ traefik_dashboard_port }}]
-  address = ":{{ traefik_dashboard_port }}"
 
 ################################################################
 # Traefik logs configuration
@@ -106,7 +108,7 @@ defaultEntryPoints = ["http", "https"]
   # Optional
   # Default: "traefik"
   #
-  entryPoint = "traefik"
+  entryPoint = "{{ traefik_api_entrypoint }}"
 
   # Enabled Dashboard
   #
@@ -133,8 +135,11 @@ defaultEntryPoints = ["http", "https"]
 # Docker configuration backend
 ################################################################
 
-# Enable Docker configuration backend
+# Enable Docker configuration backend (samples below)
 [docker]
+domain = "{{ traefik_domain }}"
+watch = true
+network = "{{ traefik_docker_network }}"
 
 # Docker server endpoint. Can be a tcp or a unix socket endpoint.
 #
@@ -155,28 +160,34 @@ defaultEntryPoints = ["http", "https"]
 #
 # Optional
 # Default: true
-exposedByDefault = false
+# exposedByDefault = false
 
 
 [acme]
-email = "{{ vault_admin_email }}"
+email = "{{ traefik_admin_email }}"
 storage = "acme.json"
 entryPoint = "https"
-acmeLogging = true
-onDemand = false # create certificate when container is created
+onHostRule = true
+# TODO: Should there be logging handling?
+# acmeLogging = true
+# TODO: Should there be onDemand cert creation?
+# onDemand = false # create certificate when container is created
+
+  [acme.httpChallenge]
+  entryPoint = "http"
 
   # [acme.dnsChallenge]
   # provider = "cloudflare"
   # delayBeforeCheck = 0
 
-  # [acme.httpChallenge]
-  # entryPoint = "http"
+  # TODO: Should we use TLS Challenge?
+  # [acme.tlsChallenge]
 
-  [acme.tlsChallenge]
+  # TODO: Should we use ACME Domains?
+  # [[acme.domains]]
+  # main = ""
 
-  [[acme.domains]]
-  main = "{{ domain_base }}"
 
-
+  # TODO: Should we be using the sans feature?
   # we request a certificate for everything, because why not.
-  sans = [{{ traefik_certified_domains | default() }}]
+  # sans = []
