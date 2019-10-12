@@ -3,10 +3,14 @@
   hosts: all
   gather_facts: true
   become: true
+  # vars:
+  #   - pip_package: python3-pip
   tasks:
     - name: Install python for Ansible
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
       changed_when: false
+    - name: Install PIP
+      include_role: name=geerlingguy.pip
     - name: Install Docker
       include_role: name=geerlingguy.docker
     - name: install needed docker management dependencies
@@ -14,10 +18,26 @@
       loop:
         - python-setuptools
         - python-pip
-        - python-docker
+        # - python-docker
         - python3-setuptools
         - python3-pip
-        - python3-docker
+        # - python3-docker
+        - virtualenv
+    - name: install docker pip package
+      become: true
+      pip:
+        name: docker
+        executable: pip2
+    - name: install docker pip3 package
+      become: true
+      pip:
+        name: docker
+        executable: pip3
+    # - name: install docker pip package
+    #   become: true
+    #   pip:
+    #     name: docker
+    #     executable: pip3
     - name: Pull & Run test hello-world http server container
       docker_container:
         name: hello-world
@@ -25,3 +45,9 @@
         restart_policy: unless-stopped
         ports:
           - "12345:80"
+    # - name: Pull & Run test image for whoami tests
+    #   docker_container:
+    #     name: whoami
+    #     image: emilevauge/whoami
+    #     restart_policy: unless-stopped
+    #     ports: 1234

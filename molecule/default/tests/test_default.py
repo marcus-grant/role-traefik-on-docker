@@ -41,6 +41,13 @@ def test_traefik_data_directory(host):
     traefik_dir = host.file('/var/www/traefik')
     assert traefik_dir.exists
     assert traefik_dir.is_directory
+def test_docker_traefik_network(host):
+    """ Tests that the right docker network exists """
+    cmd = host.run('docker network inspect web')
+    assert cmd.rc == 0
+
+
+
 #  def test_traefik_container_running(host):
 #      """ Tests whether the traefik container is actually running """
 #      traefik_container = host.docker('traefik')

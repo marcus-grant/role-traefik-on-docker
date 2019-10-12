@@ -6,3 +6,8 @@
     state: directory
   loop:
     - '{{ traefik_data_directory }}'
+
+- name: create traefik administered docker internal network
+  become: true
+  docker_network:
+    name: 'web'
