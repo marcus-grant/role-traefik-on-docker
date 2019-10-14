@@ -65,7 +65,7 @@ def test_docker_traefik_network(host):
 
 
 
-#  def test_traefik_container_running(host):
-#      """ Tests whether the traefik container is actually running """
-#      traefik_container = host.docker('traefik')
-#      assert traefik_container.is_running
+def test_traefik_container_running(host):
+    """ Tests whether the traefik container is actually running """
+    traefik_container = host.docker('traefik')
+    assert traefik_container.is_running

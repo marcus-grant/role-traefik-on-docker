@@ -38,13 +38,24 @@
     #   pip:
     #     name: docker
     #     executable: pip3
+    - name: create traefik administered docker internal network
+      become: true
+      docker_network:
+        name: web
     - name: Pull & Run test hello-world http server container
       docker_container:
         name: hello-world
         image: strm/helloworld-http
+        networks:
+          - name: web
         restart_policy: unless-stopped
-        ports:
-          - "12345:80"
+        # ports:
+        #   - "12345:80"
+        labels:
+          traefik.backend: 'hello'
+          traefik.frontend.rule: 'Host:hello.test.io'
+          traefik.enable: 'true'
+          traefik.port: '80'
     # - name: Pull & Run test image for whoami tests
     #   docker_container:
     #     name: whoami
