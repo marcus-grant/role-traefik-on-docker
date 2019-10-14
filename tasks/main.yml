@@ -1,55 +1,53 @@
 ---
-- debug:
-    msg: 'vault_traefik_domain:  {{ vault_traefik_domain }}'
-# - name: traefik directories present
-#   become: true
-#   file:
-#     path: '{{ item }}'
-#     state: directory
-#   loop:
-#     - '{{ traefik_dir }}'
+- name: traefik directories present
+  become: true
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - '{{ traefik_dir }}'
 
-# - name: acme.json config file exists
-#   become: true
-#   file:
-#     path: '{{ traefik_dir }}/acme.json'
-#     state: touch
-#     mode: 0600
+- name: acme.json config file exists
+  become: true
+  file:
+    path: '{{ traefik_dir }}/acme.json'
+    state: touch
+    mode: 0600
 
-# - name: template traefik.toml configs file
-#   become: true
-#   template:
-#     force: true
-#     src: ../templates/traefik.toml.j2
-#     dest: '{{ traefik_dir }}/traefik.toml'
-#     mode: 0600
+- name: template traefik.toml configs file
+  become: true
+  template:
+    force: true
+    src: ../templates/traefik.toml.j2
+    dest: '{{ traefik_dir }}/traefik.toml'
+    mode: 0600
 
-# - name: create traefik administered docker internal network
-#   become: true
-#   docker_network:
-#     name: '{{ traefik_docker_network }}'
+- name: create traefik administered docker internal network
+  become: true
+  docker_network:
+    name: '{{ traefik_docker_network }}'
 
-# # TODO: Do we need the labels?
-# - name: traefik docker container
-#   become: true
-#   docker_container:
-#     name: traefik
-#     image: '{{ traefik_docker_image }}'
-#     networks:
-#       - name: '{{ traefik_docker_network }}'
-#     ports:
-#       - '80:80'
-#       - '443:443'
-#       # - '{{ traefik_api_port }}:{{ traefik_api_port }}'
-#       # ^ removed because it gets reported as a bound port in traefik
-#     volumes:
-#       - '/var/run/docker.sock:/var/run/docker.sock'
-#       - '{{ traefik_dir }}/traefik.toml:/etc/traefik/traefik.toml'
-#       - '{{ traefik_dir }}/acme.json:/etc/traefik/acme/acme.json'
-#     labels:
-#       traefik.enable: 'true'
-#       # traefik.backend: '{{ traefik_api_entrypoint }}'
-#       traefik.docker.network: '{{ traefik_docker_network }}'
-#       traefik.frontend.rule: 'Host:{{ traefik_api_entrypoint }}.{{ traefik_domain }}'
-#       # traefik.port: '"{{ traefik_api_port }}"'
-#     restart_policy: unless-stopped
+# TODO: Do we need the labels?
+- name: traefik docker container
+  become: true
+  docker_container:
+    name: traefik
+    image: '{{ traefik_docker_image }}'
+    networks:
+      - name: '{{ traefik_docker_network }}'
+    ports:
+      - '80:80'
+      - '443:443'
+      # - '{{ traefik_api_port }}:{{ traefik_api_port }}'
+      # ^ removed because it gets reported as a bound port in traefik
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - '{{ traefik_dir }}/traefik.toml:/etc/traefik/traefik.toml'
+      - '{{ traefik_dir }}/acme.json:/etc/traefik/acme/acme.json'
+    labels:
+      traefik.enable: 'true'
+      # traefik.backend: '{{ traefik_api_entrypoint }}'
+      traefik.docker.network: '{{ traefik_docker_network }}'
+      traefik.frontend.rule: 'Host:{{ traefik_api_entrypoint }}.{{ traefik_domain }}'
+      # traefik.port: '"{{ traefik_api_port }}"'
+    restart_policy: unless-stopped
