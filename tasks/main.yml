@@ -13,6 +13,7 @@
     path: '{{ traefik_dir }}/acme.json'
     state: touch
     mode: 0600
+  changed_when: false
 
 - name: template traefik.toml configs file
   become: true
@@ -35,19 +36,20 @@
     image: '{{ traefik_docker_image }}'
     networks:
       - name: '{{ traefik_docker_network }}'
+    purge_networks: true
     ports:
       - '80:80'
       - '443:443'
-      # - '{{ traefik_api_port }}:{{ traefik_api_port }}'
-      # ^ removed because it gets reported as a bound port in traefik
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
-      - '{{ traefik_dir }}/traefik.toml:/etc/traefik/traefik.toml'
-      - '{{ traefik_dir }}/acme.json:/etc/traefik/acme/acme.json'
+      - '{{ traefik_dir }}/traefik.toml:/traefik.toml'
+      - '{{ traefik_dir }}/acme.json:/acme.json'
     labels:
       traefik.enable: 'true'
       # traefik.backend: '{{ traefik_api_entrypoint }}'
       traefik.docker.network: '{{ traefik_docker_network }}'
       traefik.frontend.rule: 'Host:{{ traefik_api_entrypoint }}.{{ traefik_domain }}'
+      # TODO: Figure out why templating the label doesn't work
       # traefik.port: '"{{ traefik_api_port }}"'
+      traefik.port: "8080"
     restart_policy: unless-stopped
