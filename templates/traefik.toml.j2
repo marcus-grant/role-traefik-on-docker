@@ -23,9 +23,9 @@ storage = "acme.json"
 entryPoint = "https"
 onHostRule = true
   [acme.httpChallenge]
-  entryPoint = "http"
+    entryPoint = "http"
 
 [docker]
-domain = "{{ traefik_domain }}"
+domain = "{{ base_domain }}"
+endpoint = "unix:///var/run/docker.sock"
 watch = true
-network = "{{ traefik_docker_network }}"
