@@ -15,6 +15,14 @@
     mode: 0600
   changed_when: false
 
+- name: traefik.log log file exists
+  become: true
+  file:
+    path: '{{ traefik_dir }}/traefik.log'
+    state: touch
+    mode: 0600
+  changed_when: false
+
 - name: template traefik.yml configs file
   become: true
   template:
@@ -27,6 +35,9 @@
   become: true
   template:
     force: true
+    src: ../templates/config.yml.j2
+    dest: '{{ traefik_dir }}/config.yml'
+    mode: 0600
 
 - name: create traefik administered docker internal network
   become: true
@@ -39,6 +50,8 @@
   docker_container:
     name: traefik
     image: '{{ traefik_docker_image }}'
+    security_opts:
+      - no-new-privileges:true
     ports:
       - '80:80'
       - '443:443'
@@ -49,7 +62,9 @@
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - '{{ traefik_dir }}/traefik.log:/traefik.log'
       - '{{ traefik_dir }}/traefik.yml:/traefik.yml'
+      - '{{ traefik_dir }}/config.yml:/config.yml'
       - '{{ traefik_dir }}/acme.json:/acme.json'
     labels:
       traefik.enable: 'true'
